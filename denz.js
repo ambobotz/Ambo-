@@ -581,9 +581,22 @@ const buttonMessage = {
 contentText: text1,
 footerText: desc1,
 buttons: but,
-headerType: 1
+headerType: "TEXT"
 }
 denz.sendMessage(id, buttonMessage, MessageType.buttonsMessage, options)
+}
+///Button Document
+const sendButDocument = async(id, text1, desc1, doc1, but = [], options = {}) => {
+kma = doc1
+mhan = await denz.prepareMessage(from, dfrply, document, kma)
+const buttonMessages = {
+documentMessage: mhan.message.documentMessage,
+contentText: text1,
+footerText: desc1,
+buttons: but,
+headerType: "DOCUMENT"
+}
+denz.sendMessage(id, buttonMessages, MessageType.buttonsMessage, options)
 }
 ///Button Image
 const sendButImage = async(id, text1, desc1, gam1, but = [], options = {}) => {
@@ -594,7 +607,7 @@ imageMessage: mhan.message.imageMessage,
 contentText: text1,
 footerText: desc1,
 buttons: but,
-headerType: 4
+headerType: "IMAGE"
 }
 denz.sendMessage(id, buttonMessages, MessageType.buttonsMessage, options)
 }
@@ -607,7 +620,7 @@ videoMessage: mhan.message.videoMessage,
 contentText: text1,
 footerText: desc1,
 buttons: but,
-headerType: 5
+headerType: "VIDEO"
 }
 denz.sendMessage(id, buttonMessages, MessageType.buttonsMessage, options)
 }
@@ -620,7 +633,7 @@ locationMessage: mhan.message.locationMessage,
 contentText: text1,
 footerText: desc1,
 buttons: but,
-headerType: 6
+headerType: "LOCATION"
 }
 denz.sendMessage(id, buttonMessages, MessageType.buttonsMessage, options)
 }
