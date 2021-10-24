@@ -586,9 +586,10 @@ headerType: "TEXT"
 denz.sendMessage(id, buttonMessage, MessageType.buttonsMessage, options)
 }
 ///Button Document
-const sendButDocument = async(id, text1, desc1, doc1, but = [], options = {}) => {
+const sendButDocument = async(id, text1, desc1, file1, doc1, but = [], options = {}) => {
+media = file1
 kma = doc1
-mhan = await denz.prepareMessage(from, dfrply, document, kma)
+mhan = await denz.prepareMessage(from, media, document, kma)
 const buttonMessages = {
 documentMessage: mhan.message.documentMessage,
 contentText: text1,
