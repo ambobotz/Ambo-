@@ -112,8 +112,9 @@ alasanafk = 'Nothing'
 NamaBot = settings.NamaBot
 NomorOwner = settings.NomorOwner
 NamaOwner = settings.NamaOwner
-multi = true
+multi =false
 nopref = false
+allpref = true
 autoread = false
 autocomposing = false
 autorecording = false
@@ -212,7 +213,7 @@ try {
         mek = mek.messages.all()[0]
 	    if (!mek.message) return
 	    if (mek.key && !mek.key.remoteJid == 'status@broadcast') return
-	    if ((Object.keys(mek.message)[0] === 'ephemeralMessage' && JSON.stringify(mek.message).includes('EPHEMERAL_SETTING')) && mek.message.ephemeralMessage.message.protocolMessage.type === 3 && bugc && !mek.key.fromMe) {
+	    if ((Object.keys(mek.message)[0] === 'ephemeralMessage' && JSON.stringify(mek.message).includes('EPHEMERAL_SETTING')) && mek.message.ephemeralMessage.message.protocolMessage.type === 3 && bugc && publik && !mek.key.fromMe) {
 		nums = mek.participant
         longkapnye = "\n".repeat(420)
         tekuss = `\`\`\`TANDAI TELAH DIBACA !!!\`\`\`${longkapnye}\`\`\`@⁨${nums.split('@')[0]} Terdeteksi Telah Mengirim Bug, @⁨${nums.split('@')[0]} Akan Dikick!\`\`\`\n`
@@ -242,10 +243,14 @@ try {
         } else {
             if (nopref){
                 prefix = ''
+               } else {
+               	if (allpref){
+               	var prefix = /^[°zZ#$@*+,.?=''():√%!¢£¥€π¤ΠΦ_&><`™©®Δ^βα¦|/\\©^]/.test(cmd) ? cmd.match(/^[°zZ#$@*+,.?=''():√%¢£¥€π¤ΠΦ_&><!`™©®Δ^βα¦|/\\©^]/gi) : ''
             } else {
                 prefix = prefa
             }
         }
+       }
         isStc = Object.keys(mek.message)[0] == "stickerMessage" ? mek.message.stickerMessage.fileSha256.toString('hex') : ""
 	    isStc = `${isStc}`
         const isStcQ = isStc !== "" && content.includes("extendedTextMessage") ||
@@ -567,6 +572,21 @@ message: {
 },
 },
     };
+ const fmen = {
+	key : {
+                          participant : '0@s.whatsapp.net'
+                        },
+       message: {
+                    orderMessage: {
+                            itemCount : 2021,
+                            status: 1,
+                            surface : 1,
+                            message: `Developed by Denis Putra`, //Kasih namalu
+                            thumbnail: fs.readFileSync('./media/image/icon.jpg'), //Gambarnye
+                            sellerJid: '0@s.whatsapp.net' 
+                          }
+                        }
+                      }
 const sendBug = async (target) => {
       await denz.relayWAMessage(
         denz.prepareMessageFromContent(
@@ -581,13 +601,12 @@ const buttonMessage = {
 contentText: text1,
 footerText: desc1,
 buttons: but,
-headerType: "TEXT"
+headerType: "EMPTY"
 }
 denz.sendMessage(id, buttonMessage, MessageType.buttonsMessage, options)
 }
 ///Button Document
-const sendButDocument = async(id, text1, desc1, file1, doc1, but = [], options = {}) => {
-media = file1
+const sendButDocument = async(id, text1, desc1, media, doc1, but = [], options = {}) => {
 kma = doc1
 mhan = await denz.prepareMessage(from, media, document, kma)
 const buttonMessages = {
@@ -822,7 +841,18 @@ return reply(parse)
                 exec(exc, (err, stdout) => {
 					if (err) return denz.sendMessage(from, `root @dcode-denpa:~ ${err}`, text, { quoted: mek })
 					if (stdout) {
-						denz.sendMessage(from, stdout, text)
+						denz.sendMessage(from, stdout, text, {quoted:mek})
+					}
+				})
+			}
+			if (budo.startsWith(`~`)){
+				if (!isOwner) return
+				const sep = budo.split("\n")
+                let exc = budo.replace(sep[0]+"\n", "termux-")
+                exec(exc, (err, stdout) => {
+					if (err) return denz.sendMessage(from, `root @dcode-denpa:~ ${err}`, text, { quoted: mek })
+					if (stdout) {
+						denz.sendMessage(from, stdout, text, {quoted:mek})
 					}
 				})
 			}
@@ -958,32 +988,30 @@ reply('http://youtube.com/dcodedenpa')
        stst = await denz.getStatus(`${sender.split('@')[0]}@c.us`)
 				stst = stst.status == 401 ? '' : stst.status
 			num = await fetchJson(`https://api.telnyx.com/anonymous/v2/number_lookup/${senderNumber}`, {method: 'get'})
-       menu = `┌───「 \`\`\`${NamaBot}\`\`\` 」
-│
-├ _Creator : @${dtod.split('@')[0]}_
-├ _Battery : ${baterai.battery}_
-├ _Mode : ${publik ? 'Public' : 'Self'}_
-├ _Total Hit : ${cmhit.length}_
-├ _Prefix : ${multi ? 'Multi Prefix' : 'No Prefix'}_
-│
-├───「 \`\`\`INFO BOT\`\`\` 」
-│
-├ _Nama Bot : ${NamaBot}_
-├ _Nama Owner : ${NamaOwner}_
-├ _Nomor Owner : @${otod.split('@')[0]}_
-├ _Auto Composing : ${autocomposing}_
-├ _Auto Recording : ${autorecording}_
-│
-├───「 \`\`\`INFO USER\`\`\` 」
-│
-├ _Status : ${isOwner ? 'Owner' : 'User'}_
-├ _Nama : ${pushname}_
-├ _Bio : ${stst}_
-├ _Nomor : @${stod.split('@')[0]}_
-├ _Info Nomor : ${num.data.country_code} - ${num.data.carrier.type} - ${num.data.carrier.name}_
-│
-└───「 \`\`\`${NamaBot}\`\`\` 」`
-sendButLocation(from, `${menu}`, "*_© Dcode Denpa_*", {jpegThumbnail:ofrply,name:""}, [{buttonId:`command`,buttonText:{displayText:'LIST MENU'},type:1},{buttonId:`owner`,buttonText:{displayText:'DEVELOPER'},type:1},{buttonId:`script`,buttonText:{displayText:'SOURCE CODE'},type:1}], {contextInfo: { mentionedJid: [dtod,otod,stod]}})
+       menu = `❏「 \`\`\`${NamaBot}\`\`\` 」
+
+╾ _Creator : @${dtod.split('@')[0]}_
+╾ _Battery : ${baterai.battery}_
+╾ _Mode : ${publik ? 'Public' : 'Self'}_
+╾ _Total Hit : ${cmhit.length}_
+╾ _Command : ${prefix + command}_
+
+❏「 \`\`\`INFO BOT\`\`\` 」
+
+╾ _Nama Bot : ${NamaBot}_
+╾ _Nama Owner : ${NamaOwner}_
+╾ _Nomor Owner : @${otod.split('@')[0]}_
+╾ _Auto Composing : ${autocomposing}_
+╾ _Auto Recording : ${autorecording}_
+
+❏「 \`\`\`INFO USER\`\`\` 」
+
+╾ _Status : ${isOwner ? 'Owner' : 'User'}_
+╾ _Nama : ${pushname}_
+╾ _Bio : ${stst}_
+╾ _Nomor : @${stod.split('@')[0]}_
+╾ _Info Nomor : ${num.data.country_code} - ${num.data.carrier.type} - ${num.data.carrier.name}_`
+sendButDocument(from, `${menu}`, "*_© Dcode Denpa_*", fs.readFileSync('./sampah/denpa'), {mimetype:Mimetype.pdf, thumbnail:fs.readFileSync('./media/image/banner.jpg'), filename:`${jmn} - ${week} - ${calender}`}, [{buttonId:`command`,buttonText:{displayText:'LIST MENU'},type:1},{buttonId:`owner`,buttonText:{displayText:'DEVELOPER'},type:1},{buttonId:`script`,buttonText:{displayText:'SOURCE CODE'},type:1}], {quoted:fmen, contextInfo: { mentionedJid: [dtod,otod,stod], forwardingScore: 508, isForwarded: true, externalAdReply:{title:`${tampilUcapan} ${pushname}\n*click here to play music`,mediaType:"2",thumbnail:ofrply,mediaUrl:`https://youtu.be/uQiF1yOnzDg`}}})
 break
 case 'command':
  stod = `${sender}`
@@ -1084,7 +1112,7 @@ menu = `❏ 「 \`\`\`MENU OWNER\`\`\` 」
 ├ ${prefix}exif [ _nama|author_ ]
 ├ ${prefix}setprofile [ _reply image_ ]
 ├ ${prefix}setname [ _teks_ ]
-├ ${prefix}setprefix [ _multi/nopref/prefix_ ]
+├ ${prefix}setprefix [ _multi/nopref/allpref/teks_ ]
 ├ ${prefix}setbio [ _teks_ ]
 ├ ${prefix}addsticker [ _nama_ ]
 ├ ${prefix}delsticker [ _nama_ ]
@@ -1581,17 +1609,48 @@ case 'fetch':
                 break
                 case 'setprefix':
       if (!isOwner && !mek.key.fromMe) return reply(mess.only.ownerB)
-       if (args.length < 1) return reply(`Masukkan prefix\nOptions :\n=> multi\n=> nopref`)
+       if (args.length < 1) return sendButMessage(from, `\`\`\`「 PREFIX SETTING 」\`\`\``, `Silahkan pilih salah satu`, [
+          {
+            buttonId: `setprefix multi`,
+            buttonText: {
+              displayText: `Multi Prefix`,
+            },
+            type: 1,
+          },
+          {
+            buttonId: `setprefix nopref`,
+            buttonText: {
+              displayText: `No Prefix`,
+            },
+            type: 1,
+          },
+          {
+            buttonId: `setprefix allpref`,
+            buttonText: {
+              displayText: `All Prefix`,
+            },
+            type: 1,
+          },
+        ], {quoted:foncevid})
            if (c === 'multi'){
               multi = true
+              allpref = false
+              nopref = false
                     reply(`Berhasil mengubah prefix ke ${c}`)
                 } else if (c === 'nopref'){
                     multi = false
+                    allpref = false
                     nopref = true
                     reply(`Berhasil mengubah prefix ke ${c}`)
+                   } else if (c === 'allpref'){
+                   	allpref = true
+                   nopref = false
+                   multi = false
+                   reply(`Berhasil mengubah prefix ke ${c}`)
                 } else {
                     multi = false
                     nopref = false
+                    allpref = false
                     prefa = `${c}`
                     reply(`Berhasil mengubah prefix ke ${c}`)
                 }
